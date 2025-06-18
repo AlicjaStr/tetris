@@ -3,11 +3,6 @@ package tetris.logic
 import engine.random.{RandomGenerator, ScalaRandomGen}
 import tetris.logic.TetrisLogic._
 
-/** To implement Tetris, complete the ``TODOs`` below.
- *
- * If you need additional files,
- * please also put them in the ``tetris`` package.
- */
 class TetrisLogic(val randomGen: RandomGenerator,
                   val gridDims : Dimensions,
                   val initialBoard: Seq[Seq[CellType]]) {
@@ -18,29 +13,47 @@ class TetrisLogic(val randomGen: RandomGenerator,
   def this() =
     this(new ScalaRandomGen(), DefaultDims, makeEmptyBoard(DefaultDims))
 
-  // TODO implement me
-  def rotateLeft(): Unit = ()
+  private var currentState : GameState = GameState(null, randomGen,
+    gridDims, initialBoard)
 
-  // TODO implement me
-  def rotateRight(): Unit = ()
+  currentState = currentState.copy(tetromino = generateTetromino(if(gridDims.width % 2 == 0)
+    Point((gridDims.width / 2) - 1, 1) else Point(gridDims.width / 2, 1), randomGen.randomInt(7)))
 
-  // TODO implement me
-  def moveLeft(): Unit = ()
+  def generateTetromino(anchor: Point, randomNum: Int): Tetromino = {
+   currentState.generateTetromino(anchor, randomNum)
+  }
 
-  // TODO implement me
-  def moveRight(): Unit = ()
+  def rotateLeft(): Unit = {
+   currentState = currentState.rotateLeft()
+  }
 
-  // TODO implement me
-  def moveDown(): Unit = ()
+  def rotateRight(): Unit = {
+    currentState = currentState.rotateRight()
+  }
 
-  // TODO implement me
-  def doHardDrop(): Unit = ()
+  def moveLeft(): Unit = {
+    currentState = currentState.moveLeft()
+  }
 
-  // TODO implement me
-  def isGameOver: Boolean = false
+  def moveRight(): Unit = {
+    currentState = currentState.moveRight()
+  }
 
-  // TODO implement me
-  def getCellType(p : Point): CellType = Empty
+  def moveDown(): Unit = {
+    currentState = currentState.moveDown()
+  }
+
+  def doHardDrop(): Unit = {
+  currentState = currentState.drop()
+  }
+
+  def isGameOver: Boolean = {
+    currentState.gameOver()
+  }
+
+  def getCellType(p : Point): CellType = {
+    currentState.getCellType(p, currentState.tetromino)
+  }
 }
 
 object TetrisLogic {
